@@ -3,27 +3,16 @@ import './App.css';
 
 const App = () => {
   const size = 5; // 5x5 grid
-
-  // Static list for Boy (blue)
-  const boyBoard = [
-    ['pink', 'blue', 'blue', 'pink', 'pink'],
-    ['pink', 'pink', 'pink', 'blue', 'pink'],
-    ['blue', 'pink', 'blue', 'pink', 'blue'],
+  // Define the fixed pattern where each tile is either pink or blue (but not shown initially)
+  const initialBoard = [
+    ['blue', 'blue', 'blue', 'pink', 'pink'],
+    ['pink', 'pink', 'blue', 'pink', 'pink'],
+    ['blue', 'pink', 'pink', 'pink', 'blue'],
     ['blue', 'blue', 'blue', 'blue', 'blue'],
     ['pink', 'pink', 'blue', 'pink', 'pink']
   ];
 
-  // Static list for Girl (pink)
-  const girlBoard = [
-    ['blue', 'blue', 'pink', 'blue', 'pink'],
-    ['blue', 'pink', 'blue', 'pink', 'blue'],
-    ['pink', 'blue', 'pink', 'blue', 'blue'],
-    ['pink', 'pink', 'pink', 'pink', 'pink'],
-    ['blue', 'blue', 'pink', 'blue', 'blue']
-  ];
-
-  // State to keep track of which board is loaded
-  const [selectedBoard, setSelectedBoard] = useState(boyBoard);  // Default to Boy
+  // Initial empty board with null values, tiles will be revealed when clicked
   const [board, setBoard] = useState(Array(size).fill(null).map(() => Array(size).fill(null)));
   const [currentPlayer, setCurrentPlayer] = useState('pink');
   const [gameOver, setGameOver] = useState(false);
@@ -33,8 +22,8 @@ const App = () => {
   const handleClick = (row, col) => {
     if (board[row][col] || gameOver) return;
 
-    // Set the clicked tile color based on the predefined pattern in selectedBoard
-    const color = selectedBoard[row][col];
+    // Set the clicked tile color based on the predefined pattern in initialBoard
+    const color = initialBoard[row][col];
     const newBoard = board.map((r, rIdx) =>
         rIdx === row
             ? r.map((cell, cIdx) => (cIdx === col ? color : cell))
@@ -81,42 +70,23 @@ const App = () => {
     }
   };
 
-  // Switch between Boy and Girl boards
-  const loadBoard = (boardType) => {
-    if (boardType === 'boy') {
-      setSelectedBoard(boyBoard);
-    } else {
-      setSelectedBoard(girlBoard);
-    }
-    // Reset the board and game state when a new board is selected
-    setBoard(Array(size).fill(null).map(() => Array(size).fill(null)));
-    setGameOver(false);
-    setWinnerMessage('');
-  };
-
-  // Rendering the 5x5 grid and the board selection
+  // Rendering the 5x5 grid
   return (
-      <div className="container">
-        <div className="board-selection">
-          <button onClick={() => loadBoard('boy')}>Load Board 1</button>
-          <button onClick={() => loadBoard('girl')}>Load Board 2</button>
-        </div>
-        <div className="board">
-          {board.map((row, rowIdx) => (
-              <div key={rowIdx} className="row">
-                {row.map((cell, colIdx) => (
-                    <div
-                        key={colIdx}
-                        className="tile"
-                        onClick={() => handleClick(rowIdx, colIdx)}
-                    >
-                      {cell === 'pink' ? '🎀' : cell === 'blue' ? '🔵' : ''}
-                    </div>
-                ))}
-              </div>
-          ))}
-          {gameOver && <div className="winner-message">{winnerMessage}</div>}
-        </div>
+      <div className="board">
+        {board.map((row, rowIdx) => (
+            <div key={rowIdx} className="row">
+              {row.map((cell, colIdx) => (
+                  <div
+                      key={colIdx}
+                      className="tile"
+                      onClick={() => handleClick(rowIdx, colIdx)}
+                  >
+                    {cell === 'pink' ? '🎀' : cell === 'blue' ? '🔵' : ''}
+                  </div>
+              ))}
+            </div>
+        ))}
+        {gameOver && <div className="winner-message">{winnerMessage}</div>}
       </div>
   );
 };
